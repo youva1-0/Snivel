@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+     <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/fonts/icomoon/style.css">
+
+    <link rel="stylesheet" href="/static/css/owl.carousel.min.css">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    
+    <!-- Style -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    <title>Table #8</title>
+   </head>
+
+<body>
+
+
+    <div class="content"> 
+        <div class="container">
+          <h2 class="mb-5">Table #8</h2>
+            <div class="table-responsive custom-table-responsive">   
+                <table class="table custom-table">
+                 <thead>
+                 <!-- <tr>
+                    <th scope="col">
+                        <label class="control control--checkbox">
+                            <input type="checkbox"  class="js-check-all"/>
+                            <div class="control__indicator"></div>
+                          </label>
+                    </th>-->
+	              {% for header in headings %}
+	              <th scope="col">{{ header }}</th>
+	              {% endfor %}
+                  </tr>
+                 </thead>
+
+
+
+                 <tbody id="table" >
+                   
+                  {% for row in pods %}
+                   <tr scope="row">
+                    <th scope="row" >  <label class="control control--checkbox">
+                        <input type="checkbox"/>
+                        <div class="control__indicator"></div>
+                      </label> </th>
+	              {% for cell in row %}
+	              <td>{{ cell }}</td>
+	              {% endfor %}
+                  
+	              </tr>
+                  <tr class="spacer"><td colspan="100"></td></tr>
+                  {% endfor %}
+
+                 </tbody>
+
+                </table>
+
+                <input type="button" id="select" value="Get Selected" onclick="myfunction();"/>
+   <input type="button" id="stop" value="Stop capture" onclick="stop_capture();"/>
+   <a href="{{ url_for('.downloadFile') }}"><input type="button" id="download" value="Download pcap"/></a>
+
+
+
+            </div>
+        </div>
+    </div>
+ <br />
+ 
+
+  <script>
+
+    function podDescription() {
+        //Reference the Table.
+        var grid = document.getElementById("table");
+ 
+        //Reference the CheckBoxes in Table.
+        var infobutton = grid.getElementsByTagName("BUTTON");
+	var podName = ""
+	var namespace = ""
+
+        //Loop through the buttons.
+	alert(infobutton.length);
+        for (var i = 0; i < infobutton.length; i++) {   
+		if (infobutton[i].onclick) {
+		//alert(infobutton[i])
+                var row = infobutton[i].parentNode.parentNode;
+		alert(row)
+		alert(row.cells)
+		podName = row.cells[0].innerHTML;
+		namespace = row.cells[1].innerHTML;
+            }
+        }
+	alert ("this is from podDescription "+podName);
+	alert ("this is from podDesciption also "+namespace);
+	let values = [podName,namespace];
+	//alert("values created "+ values);
+	return values; 
+    }
+
+ </script>
+
+
+ <script type="text/javascript">
+    window.onload = function () {
+        var table = document.getElementById("table");
+        var chks = table.getElementsByTagName("INPUT");
+        for (var i = 0; i < chks.length; i++) {
+            chks[i].onclick = function () {
+                for (var i = 0; i < chks.length; i++) {
+                    if (chks[i] != this && this.checked) {
+                        chks[i].checked = false;
+                    }
+                }
+            };
+        }
+    };
+ </script>
+ <script type="text/javascript">
+    function GetSelected() {
+        //Reference the Table.
+        var grid = document.getElementById("table");
+ 
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByTagName("INPUT");
+        //var message = "Id Name                  Country\n";
+ 	//var message = ""
+	var podName = ""
+	var podIp = ""
+	var podNode = ""
+
+        //Loop through the CheckBoxes.
+        for (var i = 0; i < checkBoxes.length; i++) {
+            if (checkBoxes[i].checked) {
+                var row = checkBoxes[i].parentNode.parentNode;
+                podName = row.cells[0].innerHTML;
+               // message += "   " + row.cells[2].innerHTML;
+		podIp = row.cells[2].innerHTML;
+                podNode = row.cells[3].innerHTML;
+                //message += "\n";
+            }
+        }
+	alert ("this is from GetSelected "+podName);
+	let values = [podName,podNode];
+	alert("values created "+ values);
+	return values; 
+    }
+
+ </script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+ <script>
+    function myfunction() {
+	//alert("calling GetSelected(): " GetSelected());
+	alert("function called successfuly");
+	let values = GetSelected();
+	alert(values);
+	//let values = GetSelected();
+        //const podName, podNode = GetSelected();
+	
+	//alert(podName + " from myfunction " + podNode);
+        //const lastname = document.getElementById("lname").value;
+	//alert("values doesnt get assigned to const");
+	const podName = values[0];
+	const podNode = values[1];
+	alert("podName: "+ podName + "from myfunction() & podNode: " +podNode+"?");
+
+        const dict_values = {podName, podNode} //Pass the javascript variables to a dictionary.
+        const s = JSON.stringify(dict_values); // Stringify converts a JavaScript object or value to a JSON string
+        console.log(s); // Prints the variables to console window, which are in the JSON format
+        alert("this is "+s)
+        $.ajax({
+            url:"/test",
+            type:"POST",
+            contentType: "application/json",
+            data: JSON.stringify(s)});
+	    alert("data sent to flask")
+
+  }
+  </script>
+
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+ <script> 
+	function stop_capture() {
+		const x = "test"
+        	alert("this is from stop_capture()")
+        	$.ajax({
+            		url:"/stop",
+            		type:"POST",
+            		contentType: "application/json",
+            		//data: str(x)
+			});
+	    		alert("data sent from stop button to flask")
+		
+    }
+   </script>
+
+  <script type="text/javascript">  
+const checkBoxes = document.querySelectorAll('input[type="checkbox"]');
+const selectButton = document.getElementById('select');
+const stopButton = document.getElementById('stop');
+const downButton = document.getElementById('download');
+
+checkBoxes.forEach((cb) => {
+  cb.addEventListener('change', checkButtonStatus);
+});
+
+function checkButtonStatus() {
+  const checkedCount = [...checkBoxes].filter((cb) => cb.checked);
+ 
+  selectButton.disabled = true
+  stopButton.disabled = true
+  downButton.disabled = true
+
+  if(checkedCount.length == 1 ){
+    selectButton.disabled = false
+    selectButton.addEventListener("click", () => {
+    stopButton.disabled = false
+    selectButton.disabled = true
+    stopButton.addEventListener("click", () => {
+    downButton.disabled = false
+    stopButton.disabled = true
+
+});
+});
+  }
+ }
+checkButtonStatus()
+</script> 
+
+</body>
+</html>
+

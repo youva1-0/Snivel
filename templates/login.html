@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Slide Navbar</title>
+	<link rel="stylesheet"  href="static/css/login.css">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap" rel="stylesheet">
 
+</head>
+<body>
+	<div class="main">  	
+		<input type="checkbox" id="chk" aria-hidden="true">
+
+			<div class="signup">
+				<form action="{{ url_for("login")}}" method="post">
+					<label for="chk" aria-hidden="true">Local Cluster</label>
+			
+					<button type="submit">Continue</button>
+			
+			</form>
+			</div>
+
+			<div class="login">
+				<form action="{{ url_for("login")}}" method="post">
+					<label for="chk" aria-hidden="true">Remote Cluster</label>
+					<input type="text" name="ip" placeholder="IP Address" required="">
+					<input type="text" name="port" placeholder="Port" required="">
+                    <input type="text" name="token" placeholder="Token" required="">
+
+				
+		    <button type="submit">Continue</button>
+				</form>
+			</div>
+	</div>
+</body>
+
+
+</html>
